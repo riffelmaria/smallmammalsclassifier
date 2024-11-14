@@ -18,7 +18,7 @@ Python repository for training, prediction, and evaluation of a small terrestria
 
 ## Description
 
-This Python project contains all steps to build a machine-learning classifier designed to recognize and classify small terrestrial mammal calls, including species groups like rodents, voles, and shrews. Also, scripts for prediction and evaluation are available.
+This Python project contains all steps to build a machine-learning classifier designed to recognize and classify small terrestrial mammal calls, including species groups like rodents, voles, and shrews. Also, scripts for prediction and evaluation are available, i.e. using the provided models.
 Built with Python, this tool can be used by researchers and enthusiasts for detecting calls in Passive Acoustic Monitoring (PAM) audio files, understanding habitat diversity, and aiding conservation efforts.
 
 ## Components
