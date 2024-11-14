@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.~lock.*
+*.pth
 
 # C extensions
 *.so
@@ -24,6 +26,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pyc
 MANIFEST
 
 # PyInstaller
@@ -129,6 +132,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode
 
 # Spyder project settings
 .spyderproject
