@@ -1,0 +1,38 @@
+[project]
+name = "masterthesis_small_terrestrial_mammals"
+version = "0.0.2"
+dependencies = ["opensoundscape", "pydantic", "librosa", "soundfile", "numpy", "odfpy", "pyexiftool", "scikit-multilearn", "wandb"]
+requires-python = ">=3.9"
+authors = [
+  {name = "Maria Riffel", email = "info@mariariffel.de"},
+]
+description = "test"
+readme = "README.md"
+#license = {file = "LICENSE.txt"}
+
+
+[project.urls]
+Homepage = "https://github.com/riffelmaria/masterthesis_smallmammals"
+
+[project.scripts]
+JSONWriterGen1 = "GEN1_json_writer:main"
+JSONWriterGen2 = "GEN2_json_writer:main"
+MLTrainingGen1 = "GEN1_ml_script:main"
+MLTrainingGen2 = "GEN2_ml_script:main"
+ModelParameterJSONWriter = "GEN1_create_json_model_parameters:main"
+ModelParameterJSONWriterGen2 = "GEN2_create_json_model_parameters:main"
+downsample = "downsample_audios:main"
+PredictOnDataGen1 = "GEN1_predict_on_data:main"
+PredictOnDataGen2 = "GEN2_predict_on_data:main"
+PredictOnTestDFGen1 = "GEN1_predict_on_testdf:main"
+PredictOnTestDFGen2 = "GEN2_predict_on_testdf:main"
+audiosnippetwriter = "write_audio_snippets:main"
+ShortAudioSnippetWriter = "extract_audio:main"
+CompareCallsAM = "compare_calls_in_videos_AMsettings:main"
+CompareCallsLocation = "compare_calls_in_videos_locations:main"
+CalculateSamples = "calculate_samples_for_gen2:main"
+EvaluatePredictionGEN1 = "GEN1_evaluate_prediction:main"
+EvaluatePredictionGEN2 = "GEN2_evaluate_prediction:main"
+MetricsFromPredictionGen1 = "GEN1_metrics_data_prediction:main"
+LoadPKLWriteCSV = "load_pickle_write_csv:main"
+ProcessBTOResult = "BTO_process_csv:main"
