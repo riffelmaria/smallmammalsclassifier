@@ -7,165 +7,34 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from helper_functions.preprocess_functions import preprocess, set_conversion_table
-from helper_functions.training_functions import (
+from training_functions import (
+    set_conversion_table,
+    preprocess_dfs,
     create_preprocessor,
     inspection_of_samples,
     train_model,
+    gradient_activation_cams # To do
 )
 from lib.model_config import ModelConfig
 from sklearn.model_selection import train_test_split
 
+from lib.genera import classes_gen
+from lib.groups_minimal import classes_grp
 
-def main():
-    parser = argparse.ArgumentParser(
-        prog="Training",
-        description="Trains ML models with specified parameters",
-    )
-
-    parser.add_argument(
-        "model_config",
-        help="Path to JSON file of model config, e.g. src/lib/*.json",
-    )
-
-    parser.add_argument(
-        "--no-ask",
-        action="store_false",
-        dest="ask",
-        help="flag, if no inspection of samples is needed",
-    )
-    parser.add_argument("output_path", help="Path to train dataset")
-    args = parser.parse_args()
-
-    with open(args.model_config) as file:
-        arguments = json.load(file)
-        config = ModelConfig(**arguments)
-
-    conversion_table = set_conversion_table(config.scale)
-
-    label_dfsegment = pd.DataFrame()
-    label_dfs: list[pd.DataFrame] = []
-    test_dfs_gen1 = []
-
-    srs = []
-
-    for jsonfile in Path(config.folder_jsons).iterdir():
-        if "segments" in str(jsonfile):
-            obj1, obj2 = preprocess(
-                jsonfile, conversion_table, config.clip_sample_duration
-            )
-            label_dfsegment = obj1
-            srs.append(obj2)
-        else:
-            obj1, obj2 = preprocess(
-                jsonfile, conversion_table, config.clip_sample_duration
-            )
-            rest, test = train_test_split(obj1, test_size=0.1, shuffle=True)
-            label_dfs.append(rest)
-            test_dfs_gen1.append(test)
-            srs.append(obj2)
-
-    # Make separate test set for testing trained model
-    test_df_gen1 = pd.concat(test_dfs_gen1)
-    test_df_gen1 = test_df_gen1.replace(np.nan, 0)
-
-    # preparation for stratifying label_df (collected data)
-    segment_stratify = label_dfsegment.copy()
-    segment_stratify["stratify_key"] = (
-        label_dfsegment[["target_stm", "Noise", "bats"]]
-        .astype(str)
-        .agg("-".join, axis=1)
-    )
-
-    rest_segments, test_segments = train_test_split(
-        label_dfsegment,
-        test_size=0.1,
-        shuffle=True,
-        stratify=segment_stratify["stratify_key"],
-    )
-
-    # save test_df
-    test_df = pd.concat([test_df_gen1, test_segments])
-    os.makedirs(name=f"{args.output_path}/{config.model_name}", exist_ok=True)
-    test_df.to_pickle(f"{args.output_path}/{config.model_name}/test_df.pkl")
-    test_df.to_csv(f"{args.output_path}/{config.model_name}/test_df.csv", index=True)
-
-    # Use train_size as "train_part" to train models with different number of samples
-
-    for i, (train_df, validation_df) in enumerate(
-        get_things(config, rest_segments, label_dfs)
-    ):
-        actual_training(train_df, validation_df, config, args, i)
-
-
-def get_stratification(df: pd.DataFrame):
+def get_stratification(df: pd.DataFrame, scale: str):
     df_stratify = df.copy()
-    df_stratify["stratify_key"] = (
-        df[["target_stm", "Noise", "bats"]].astype(str).agg("-".join, axis=1)
-    )
-    return df_stratify["stratify_key"]
-
-
-def get_things(config, rest_segments, label_dfs):
-
-    if config.train_size == 0.1:
-        for _ in range(5):
-
-            train_segments, _ = train_test_split(
-                rest_segments,
-                train_size=config.train_size,
-                shuffle=True,
-                stratify=get_stratification(rest_segments),
-            )
-
-            trainingsamples_df = pd.concat([train_segments, *label_dfs])
-            trainingsamples_df = trainingsamples_df.replace(np.nan, 0)
-
-            train_df, validation_df = train_test_split(
-                trainingsamples_df,
-                train_size=0.9,
-                shuffle=True,
-                stratify=get_stratification(trainingsamples_df),
-            )
-            yield train_df, validation_df
-
-    elif config.train_size == 0.5:
-        train_segments, _ = train_test_split(
-            rest_segments,
-            train_size=config.train_size,
-            shuffle=True,
-            stratify=get_stratification(rest_segments),
-        )
-
-        trainingsamples_df = pd.concat([train_segments, *label_dfs])
-        trainingsamples_df = trainingsamples_df.replace(np.nan, 0)
-
-        train_df, validation_df = train_test_split(
-            trainingsamples_df,
-            train_size=0.9,
-            shuffle=True,
-            stratify=get_stratification(trainingsamples_df),
-        )
-        yield train_df, validation_df
-    elif config.train_size == 1.0:
-
-        trainingsamples_df = pd.concat([rest_segments, *label_dfs])
-        trainingsamples_df = trainingsamples_df.replace(np.nan, 0)
-
-        train_df, validation_df = train_test_split(
-            trainingsamples_df,
-            train_size=0.9,
-            shuffle=True,
-            stratify=get_stratification(trainingsamples_df),
-        )
-        yield train_df, validation_df
+    class_scales = {"groups": classes_grp, "genera": classes_gen}
+    if scale in class_scales:
+        df_stratify["stratify_key"] = df[[class_scales[scale]]].astype(str).agg("-".join, axis=1)
     else:
-        raise ValueError("help me, i do not belong here")
+        raise ValueError("Invalid scale")
+
+    return df_stratify["stratify_key"]
 
 
 def actual_training(train_df, validation_df, config, args, i):
     preprocessor = create_preprocessor(
-        config.clip_sample_duration,
+        config.clip_duration,
         config.channels,
         config.min_fr,
         config.sampling_rate,
@@ -182,7 +51,7 @@ def actual_training(train_df, validation_df, config, args, i):
         save_path="output/figures",
     )
     if args.ask:
-        q = input("Continue?")
+        q = input("After inspection of samples: Continue? (type 'yes')")
         if q != "yes":
             return
 
@@ -204,6 +73,74 @@ def actual_training(train_df, validation_df, config, args, i):
         img_size=config.imgsize,
         output_path=args.output_path,
     )
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog="MLTraining",
+        description="Trains an ML model with specified parameters",
+    )
+
+    parser.add_argument(
+        "model_config",
+        type = str,
+        help="Path to JSON file of model config, e.g. src/training/lib/*.json",
+    )
+
+    parser.add_argument(
+        "--no-ask",
+        action="store_false",
+        dest="ask",
+        help="flag, if no inspection of samples is needed",
+    )
+    parser.add_argument("output_path", help="Path to train dataset")
+    args = parser.parse_args()
+
+    with open(args.model_config) as file:
+        arguments = json.load(file)
+        config = ModelConfig(**arguments)
+
+    conversion_table = set_conversion_table(config.scale)
+
+    # Preprocess files to data frames
+    #label_dfsegment = pd.DataFrame()
+    label_dfs: list[pd.DataFrame] = []
+    test_dfs: list[pd.DataFrame] = []
+
+    srs = []
+
+    for jsonfile in Path(config.folder_jsons).iterdir():
+        obj1, obj2 = preprocess_dfs(
+                jsonfile, 
+                conversion_table, 
+                config.clip_duration
+            )
+        rest, test = train_test_split(obj1, test_size=0.1, shuffle=True)
+        label_dfs.append(rest)
+        test_dfs.append(test)
+        srs.append(obj2)
+
+    # Make separate test set for testing trained model
+    test_dataset_df = pd.concat(test_dfs)
+    test_dataset_df = test_dataset_df.replace(np.nan, 0)
+    os.makedirs(name=f"{args.output_path}/{config.model_name}", exist_ok=True)
+    test_dataset_df.to_pickle(f"{args.output_path}/{config.model_name}/test_dataset_df.pkl")
+    test_dataset_df.to_csv(f"{args.output_path}/{config.model_name}/test_dataset_df.csv", index=True)
+
+    # Ensure that `label_df` is stratified by class so that each class is represented in both the training and validation datasets
+    label_df = pd.concat(label_dfs)
+    label_df = label_df.replace(np.nan, 0)
+    stratify_key = get_stratification(df = label_df, scale =config.scale)
+
+    train_df, validation_df = train_test_split(
+        label_df,
+        train_size=config.train_size,
+        shuffle=True,
+        stratify=stratify_key,
+    )
+
+    actual_training(train_df, validation_df, config, args)
+
 
 
 if __name__ == "__main__":

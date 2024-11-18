@@ -1,18 +1,31 @@
 [project]
 name = "smallmammalsclassifier"
-version = "0.0.1"
-dependencies = ["opensoundscape", "pydantic", "librosa", "soundfile", "numpy", "odfpy", "pyexiftool", "scikit-multilearn", "wandb"]
+version = "0.0.2"
+dependencies = [
+  "opensoundscape==0.10.1", 
+  "pydantic", 
+  "librosa",
+  "audio-splitter",
+  "soundfile", 
+  "numpy", 
+  "odfpy", 
+  "pyexiftool", 
+  "scikit-multilearn", 
+  "wandb"
+]
 requires-python = ">=3.9"
 authors = [
-  {name = "Maria Riffel"}, #TODO add email adress as email = "email@ress.de"
+  {name = "Maria Riffel", email = "git@mariariffel.de"}
 ]
 description = "Python project for training, predicting, and evaluating a small terrestrial mammal classifier"
 readme = "README.md"
 license = {file = "LICENSE.md"}
-
 
 [project.urls]
 Homepage = "https://github.com/riffelmaria/smallmammalsclassifier"
 
 [project.scripts]
 #TODO
+SetParameters = "training.set_parameters:main"
+MLTraining = "training.train:main"
+AudioSnippetWriter = "preprocessing.create_audio_snippets:main"

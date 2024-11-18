@@ -5,14 +5,16 @@ Python repository for training, prediction, and evaluation of a small terrestria
 
 ## Contents
 
-- [Description](#description)
-- [Components](#components)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Dataset](#dataset)
-- [Models](#models)
-- [Contributing](#contributing)
-- [License](#license)
+- [Python repository for a small terrestrial mammals classifier](#python-repository-for-a-small-terrestrial-mammals-classifier)
+  - [Contents](#contents)
+  - [Description](#description)
+  - [Components](#components)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Dataset](#dataset)
+  - [Models](#models)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ---
 
@@ -118,6 +120,8 @@ $ ...
 
 The dataset used for training the provided models includes audio data of various small terrestrial mammals. For storage and licensing reasons, the dataset itself is not included in this repository. However, you can find available data under bto ... and chirovox.
 Additionally, if you need coarsely annotated data on small terrestrial mammals, please contact me or the Institute ...
+
+Please make sure to follow the annotation scheme as in lib/groups_minimal.py or lib/genera.py, or simply addy our own annotations to match the scales.
 
 To train the model on your own dataset, organize your data in the following structure:
 
