@@ -94,7 +94,9 @@ def get_target_filename(
     return f"{folder_to_segments}/{pathpart}__{kwargs_str}.WAV"
 
 
-def get_annotation_files(folder_path:str, suffix=".Table.2.selections.txt") -> Generator:
+def get_annotation_files(
+    folder_path: str, suffix=".Table.2.selections.txt"
+) -> Generator:
     for root, dirs, files in os.walk(folder_path):
         for raven_file in files:
             if not raven_file.endswith(suffix):
@@ -102,14 +104,14 @@ def get_annotation_files(folder_path:str, suffix=".Table.2.selections.txt") -> G
             yield os.path.join(root, raven_file)
 
 
-def walk_mp4(folder_path:str):
+def walk_mp4(folder_path: str):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.lower().endswith((".mp4")):
                 yield os.path.join(root, file)
 
 
-def walk_wav(folder_path:str, ignore_path: str | None = None):
+def walk_wav(folder_path: str, ignore_path: str | None = None):
     for root, dirs, files in os.walk(folder_path):
         if root == ignore_path:
             continue
@@ -118,7 +120,7 @@ def walk_wav(folder_path:str, ignore_path: str | None = None):
                 yield os.path.join(root, file)
 
 
-def walk_raven(folder_path:str, suffix:str = "Table.2.selections.txt"):
+def walk_suffix(folder_path: str, suffix: str = "Table.2.selections.txt"):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith(suffix):

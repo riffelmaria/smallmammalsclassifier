@@ -7,11 +7,12 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from shared.files_manipulation_functions import dict_to_jsonfile
 from shared.genera import classes_gen
 from shared.groups_minimal import classes_grp
 from shared.model_config import ModelConfig
 from sklearn.model_selection import train_test_split
-from training.training_functions import gradient_activation_cams  # To do
+from training.training_functions import gradient_activation_cams  # TODO
 from training.training_functions import (
     create_preprocessor,
     inspection_of_samples,
@@ -86,7 +87,7 @@ def main():
     parser.add_argument(
         "model_config",
         type=str,
-        help="Path to JSON file of model config, e.g. src/training/lib/*.json",
+        help="Path to JSON file of model config, e.g. ./temp/model_name/*.json",
     )
 
     parser.add_argument(
@@ -142,6 +143,20 @@ def main():
     )
 
     actual_training(train_df, validation_df, config, args)
+
+    # save model metadata
+    metadata = {
+        "modelname": config.model_name,
+        "architecture": config.architecture,
+        "sample_duration": config.clip_duration,
+        "augmentation": not config.bypass_augmentations,  # TODO Koni
+        "classes": classes_grp if config.scale == "groups" else classes_gen,
+    }
+    dict_to_jsonfile(
+        dictionary=metadata,
+        folder_out=f"{args.output_path}/{config.model_name}",
+        filename=f"{config.model_name}_metadata.json",
+    )
 
 
 if __name__ == "__main__":

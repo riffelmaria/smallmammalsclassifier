@@ -43,7 +43,7 @@ def get_user_parameters(cfg: dict | None = None) -> ModelConfig:
         dict: Dictionary of parameters with updated values as entered by the user.
     """
     if cfg is None:
-        updated_params = default_config.copy()
+        updated_params = default_config.__dict__.copy()
     else:
         updated_params = cfg.copy()
 
@@ -55,7 +55,7 @@ def get_user_parameters(cfg: dict | None = None) -> ModelConfig:
 
     if accept == "yes":
         print("Using current parameters.")
-        return updated_params
+        return ModelConfig(**updated_params)
     elif accept != "no":
         print("Invalid input. Please respond with 'yes' or 'no'.")
         return get_user_parameters(updated_params)
@@ -86,17 +86,23 @@ def main():
         "-f",
         "--folder_name",
         help="Optional, path to folder where to store the model parameter JSON",
-        default="training/lib",
+        default="./temp",
     )
     args = parser.parse_args()
 
     model_config = get_user_parameters()
 
-    os.makedirs(name=args.folder_name, exist_ok=True)
+    if args.folder_name is None:
+        folder_name = "./temp"
+    else:
+        folder_name = args.folder_name
 
-    json_object = json.dumps(model_config.__dict__)
+    os.makedirs(name=f"{folder_name}/{model_config.model_name}", exist_ok=True)
+
+    json_object = json.dumps(model_config.__dict__, indent=4)
     with open(
-        args.folder_name + "/" + model_config.model_name + ".json", "w"
+        f"{folder_name}/{model_config.model_name}/parameters_{model_config.model_name}.json",
+        "w",
     ) as outfile:
         outfile.write(json_object)
 
