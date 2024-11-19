@@ -149,7 +149,7 @@ def main():
         "modelname": config.model_name,
         "architecture": config.architecture,
         "sample_duration": config.clip_duration,
-        "augmentation": not config.bypass_augmentations,  # TODO Koni
+        "augmentation": not config.bypass_augmentations,
         "classes": classes_grp if config.scale == "groups" else classes_gen,
     }
     dict_to_jsonfile(

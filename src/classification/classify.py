@@ -50,7 +50,11 @@ def main():
     folder_path = args.folder_path
     model_name = model_path.split(os.path.sep)[-1]
 
-    mlmodel = walk_suffix(model_path, suffix=".model")  # TODO Koni
+    mlmodels = list(walk_suffix(model_path, suffix=".model"))
+    if len(mlmodels) != 1:
+        raise ValueError("model_path contains none or more than 1 *.model file!")
+    mlmodel = mlmodels[0]
+
     with open(f"{model_path}/{model_name}_metadata.json") as file:
         model_metadata = json.load(file)
 
@@ -67,7 +71,7 @@ def main():
 
     # CLassify audio data
     prediction_scores_df = prediction(
-        model_path=next(mlmodel), df=original_df, workers=args.workers
+        model_path=mlmodel, df=original_df, workers=args.workers
     )
 
     prediction_scores_df.to_pickle(

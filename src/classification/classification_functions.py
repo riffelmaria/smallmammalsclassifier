@@ -15,8 +15,9 @@ def create_audio_df(folder: str, prediction_steps: float) -> pd.DataFrame:
         return_invalid_samples=False,
         raise_exceptions=False,
     )
+    assert isinstance(df, pd.DataFrame)
 
-    return df  # type: ignore # TODO Koni
+    return df
 
 
 def prediction(
