@@ -128,14 +128,14 @@ To train the model on your own dataset, please confirm that your audio and Raven
 dataset/
 ├── species_1/
 │   ├── audio1.WAV
-│   ├── audio1.selections.Table.1.txt
+│   ├── audio1.Table.1.selections.txt
 │   ├── audio2.WAV
-│   ├── audio2.selections.Table.1.txt
+│   ├── audio2.Table.1.selections.txt
 ├── species_2/
 │   ├── audio1.WAV
-│   ├── audio1.selections.Table.1.txt
+│   ├── audio1.Table.1.selections.txt
 │   ├── audio2.WAV
-│   ├── audio2.selections.Table.1.txt
+│   ├── audio2.Table.1.selections.txt
 ...
 ```
 
