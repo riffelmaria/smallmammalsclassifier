@@ -7,13 +7,7 @@ from pathlib import Path
 import pandas as pd
 import soundfile as sf
 from scipy.io import wavfile
-from shared.audio_functions import (
-    get_annotation_files,
-    get_target_filename,
-    walk_wav,
-    write_audiosegment,
-    write_raventable_from_audiofilename,
-)
+from shared.audio_functions import walk_wav
 
 
 def parse_mm_ss(value: str) -> timedelta:
@@ -35,50 +29,6 @@ def parse_mm_ss(value: str) -> timedelta:
     except ValueError:
         raise argparse.ArgumentTypeError(
             "Time must be in the format mm:ss (e.g., 05:30)."
-        )
-
-
-def get_raven_row_from_df(df):
-    for _, row in df.iterrows():
-        yield row.to_dict()
-
-
-def write_durationdf(audiofile):
-    duration_df = pd.DataFrame()
-    for _, video in raven_df[raven_df.Annotation == "Video"].iterrows():
-        begin = video["Begin Time (s)"] - 2.5
-        end = video["End Time (s)"] + 2.5
-
-        subset = raven_df[
-            (raven_df["Begin Time (s)"] > begin)
-            & (raven_df["End Time (s)"] < end)
-            & (raven_df["Annotation"] != "Video")
-        ]
-        subset_df = subset.copy()
-        subset_df["Begin Time (s)"] -= begin
-        subset_df["End Time (s)"] -= begin
-        yield begin, end, subset_df
-
-
-def process_raven(raven_file_path: str, folder_to_segments: str):
-    raven_suffix = ".Table.2.selections.txt"
-
-    audio_file_path = raven_file_path[: -len(raven_suffix)] + ".WAV"
-
-    for start, end, df in write_ravendf(raven_file_path):
-        new_audio_filename = get_target_filename(
-            folder_to_segments,
-            audio_file_path,
-            start=start,
-            end=end,
-        )
-
-        write_audiosegment(audio_file_path, start, end, new_audio_filename)
-
-        write_raventable_from_audiofilename(
-            new_audio_filename,
-            rows=get_raven_row_from_df(df),
-            suffix=".Table.2.selections.txt",
         )
 
 
@@ -115,7 +65,7 @@ def process_folder(
             audio_file=audiofile,
             duration=int(duration.total_seconds()),
             new_filename=f"{folder_to_snippets}/{Path(audiofile).parent.stem}_{Path(audiofile).stem}"
-            + "_{start}_{end}.WAV",
+            + "_start{start}s_end{end}s.WAV",
         )
 
 
@@ -150,6 +100,8 @@ def main():
 
     if args.snippet_folder is None:
         snippet_folder = f"{base_path}/Audio_Snippets"
+    else:
+        snippet_folder = args.snippet_folder
     os.makedirs(name=snippet_folder, exist_ok=True)
 
     process_folder(base_path, snippet_folder, args.duration)
