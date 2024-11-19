@@ -4,7 +4,6 @@ Python repository for training, prediction, and evaluation of a small terrestria
 ---
 
 ## Contents
-
 - [Python repository for a small terrestrial mammals classifier](#python-repository-for-a-small-terrestrial-mammals-classifier)
   - [Contents](#contents)
   - [Description](#description)
@@ -25,9 +24,9 @@ Built with Python, this tool can be used by researchers and enthusiasts for dete
 
 ## Components
 
-- **Species Detection**: Identify various small terrestrial mammal species in images.
+- **Species Detection**: Identify calls of various small terrestrial mammals in audio files.
 - **Pre-trained Model**: Use a pre-trained model to get started immediately or train your own model.
-- **Image Preprocessing**: Automatically resizes and adjusts image quality for optimal results.
+- **Audio Preprocessing**: Automatically creates audio chunks from long audio files for easier postprocessing.
 - **Easy Integration**: Simple to use with any Python environment and customizable for specific use cases.
 
 ## Installation
@@ -50,7 +49,7 @@ $ cd smallmammalsclassifier
 $ git pull
 
 # Install a Python venv
-$ python3 -m venv /path/to/.venv
+$ python3.11 -m venv /path/to/.venv
 
 # Activate the venv
 $ source /path/to/.venv/bin/activate
@@ -121,7 +120,7 @@ $ ...
 The dataset used for training the provided models includes audio data of various small terrestrial mammals. For storage and licensing reasons, the dataset itself is not included in this repository. However, you can find available data under bto ... and chirovox.
 Additionally, if you need coarsely annotated data on small terrestrial mammals, please contact me or the Institute ...
 
-Please make sure to follow the annotation scheme as in lib/groups_minimal.py or lib/genera.py, or simply addy our own annotations to match the scales.
+Please make sure to follow the annotation scheme as in shared/groups_minimal.py or shared/genera.py, or simply addy our own annotations to match the scales.
 
 To train the model on your own dataset, organize your data in the following structure:
 
@@ -151,9 +150,8 @@ If you want to train your own model, please adjust the parameter .. with this sc
 
 ## Contributing
 
-Contributions are welcome :) 
-If you have ideas for improving the classifier, adding new species, or enhancing recall, precision, or F1, please submit a pull request.
-Please take a look at CONTRIBUTING.md for more details.
+Contributions are welcome :)
+If you have ideas for improving the code, the classifier, adding new species, or enhancing recall, precision, or F1, please submit a pull request.
 
 ## License
 
