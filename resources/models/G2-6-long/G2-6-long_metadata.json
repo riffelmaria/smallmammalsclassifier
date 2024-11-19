@@ -1,0 +1,11 @@
+{
+    "modelname": "G2-6-long",
+    "architecture": "resnet18",
+    "sample_duration": 1.2,
+    "augmentation": false,
+    "classes": [
+        "target_stm",
+        "bats",
+        "Noise"
+    ]
+}
