@@ -1,22 +1,21 @@
-from pathlib import Path
-
 import typing
-#import opensoundscape.ml.cnn
+from pathlib import Path
+from typing import Tuple
+
+import pandas as pd
+
+# import opensoundscape.ml.cnn
 import wandb
 from matplotlib import pyplot as plt
-import pandas as pd
-from shared.audio_functions import get_audiofiles_from_jsonfile
-from typing import Tuple
-from opensoundscape import Audio
-from opensoundscape import CNN, SpectrogramPreprocessor
+from opensoundscape import CNN, Audio, SpectrogramPreprocessor
 from opensoundscape.annotations import BoxedAnnotations
 from opensoundscape.ml.cnn import load_model
 from opensoundscape.ml.datasets import AudioFileDataset
 from opensoundscape.ml.loss import BCEWithLogitsLoss_hot
 from opensoundscape.preprocess.utils import show_tensor_grid
-
-from lib.genera import genera
-from lib.groups_minimal import groups
+from shared.audio_functions import get_audiofiles_from_jsonfile
+from shared.genera import genera
+from shared.groups_minimal import groups
 
 
 def set_conversion_table(class_scale: str):
@@ -32,9 +31,7 @@ def set_conversion_table(class_scale: str):
 
 
 def preprocess_dfs(
-    jsonfile: Path, 
-    conversion_table: dict, 
-    clip_duration: float
+    jsonfile: Path, conversion_table: dict, clip_duration: float
 ) -> Tuple[pd.DataFrame, int]:
     """Preprocessing audio files and raven annotation files
 
@@ -59,9 +56,10 @@ def preprocess_dfs(
     label_df = boxed_annotations_converted.one_hot_clip_labels(
         clip_duration=clip_duration,
         clip_overlap=clip_duration * 0.4,  # 40% overlap of consecutive clips
-        min_label_overlap=clip_duration * 0.3,  # minimum of 30% label overlap within a clip
+        min_label_overlap=clip_duration
+        * 0.3,  # minimum of 30% label overlap within a clip
         class_subset=None,
-        final_clip="full", # last clip in an audio file that is not long enough will be 
+        final_clip="full",  # last clip in an audio file that is not long enough will be
         audio_files=list(boxed_annotations_converted.df["audio_file"].unique()),
     )
 
@@ -72,12 +70,12 @@ def preprocess_dfs(
 
 
 def create_preprocessor(
-    clip_duration: float, 
-    channels: int, 
-    min_fr: int, 
-    sr: int, 
-    width: int=448, 
-    height: int=448
+    clip_duration: float,
+    channels: int,
+    min_fr: int,
+    sr: int,
+    width: int = 448,
+    height: int = 448,
 ):
     preprocessor = SpectrogramPreprocessor(
         sample_duration=clip_duration,
@@ -129,9 +127,9 @@ def train_model(
     num_workers: int,
     img_size: int,
     channels: int,
-    output_path:str = "../../binary_train",
+    output_path: str = "../../binary_train",
     model_name: str = "",
-    wandb_usage: bool = 0,
+    wandb_usage: bool = False,
     entity: str = "",
     project_name: str = "",
     group_name: str = "",
@@ -145,7 +143,7 @@ def train_model(
         sample_shape=(img_size, img_size, channels),
     )
 
-    BCEWithLogitsLoss_hot() #change loss-function if needed
+    BCEWithLogitsLoss_hot()  # change loss-function if needed
 
     model.preprocessor = preprocessor
 
@@ -153,30 +151,30 @@ def train_model(
         try:
             wandb.login()
             wandb_session = wandb.init(
-                                entity = entity,
-                                project = project_name, 
-                                group = group_name, 
-                                name = model_name
-                            )
+                entity=entity, project=project_name, group=group_name, name=model_name
+            )
             # optional: wandb.log; determines how model flow data will be transfered to wandb (as a dictionary)
             # Further dependent variables like loss and accuracy or output metrics should be saved with wandb.log.
         except RuntimeError as rte:
             print(rte)
+            return "Please re-run code."
 
         except:
             print("Failed to create wandb session. wandb session will be None\n")
             wandb_session = None
+    else:
+        wandb_session = None
 
     model.train(
-        train_df = train_df,
-        validation_df = validation_df,
-        save_path = f"{output_path}/{model_name}/",  # where to save the trained model
-        epochs = epochs_to_train,
-        batch_size = batch_size,  # larger batch sizes (64+) improve stability and generalizability of training especially for ResNet
-        save_interval = save_interval,  # save model every epoch (the best model is always saved in addition)
+        train_df=train_df,
+        validation_df=validation_df,
+        save_path=f"{output_path}/{model_name}/",  # where to save the trained model
+        epochs=epochs_to_train,
+        batch_size=batch_size,  # larger batch sizes (64+) improve stability and generalizability of training especially for ResNet
+        save_interval=save_interval,  # save model every epoch (the best model is always saved in addition)
         # invalid_samples_log = "./invalid_samples_log/" + model_name,
-        num_workers = num_workers,  # specify 4 if you have 4 CPU processes, e.g. 0 means only the root process
-        wandb_session = wandb_session
+        num_workers=num_workers,  # specify 4 if you have 4 CPU processes, e.g. 0 means only the root process
+        wandb_session=wandb_session,
     )
 
     if wandb_usage:
@@ -189,7 +187,7 @@ def train_model(
 def gradient_activation_cams(model_path, train_df, output_path="./output/figures/"):
     """Check gradient activation maps
 
-    For trouble-shooting after model training. 
+    For trouble-shooting after model training.
     Shows which part of the spectrogram is used to recognize the sound.
     """
 
