@@ -117,12 +117,12 @@ $ ...
 
 ## Dataset
 
-The dataset used for training the provided models includes audio data of various small terrestrial mammals. For storage and licensing reasons, the dataset itself is not included in this repository. However, you can find available data under bto ... and chirovox.
-Additionally, if you need coarsely annotated data on small terrestrial mammals, please contact me or the Institute ...
+The dataset used for training the provided models includes audio data of various small terrestrial mammals. The dataset itself is not included in this repository for storage and licensing reasons. However, you can find available data under [BTO (British Trust of Ornithology)](https://www.bto.org/our-science/publications/peer-reviewed-papers/acoustic-identification-small-terrestrial-mammals "The acoustic identification of small terrestrial mammals in Britain") and [ChiroVox](https://www.chirovox.org/ "The bat call library").
+Additionally, if you need the data I annotated with a coarse class scale (small terrestrial mammals, noise, and bats), please contact me at git@mariariffel.de or the Chair of Geobotany at the University of Freiburg, Germany.
 
-Please make sure to follow the annotation scheme as in shared/groups_minimal.py or shared/genera.py, or simply addy our own annotations to match the scales.
+Please make sure to follow the annotation scheme as in ./src/shared/groups_minimal.py or ./src/shared/genera.py, or simply add your own annotations to match the class scales.
 
-To train the model on your own dataset, organize your data in the following structure:
+To train the model on your own dataset, please confirm that your audio and Raven data can be found in the same folder, like so:
 
 ```
 dataset/
