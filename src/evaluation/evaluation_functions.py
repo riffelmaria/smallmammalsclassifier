@@ -23,8 +23,6 @@ def walk_pkl(folder_path: str):
             if file.lower().endswith((".pkl")):
                 yield os.path.join(root, file)
 
-###### TODO ab hier
-
 
 
 def calculate_confusion_matrix(ground_truth: pd.DataFrame, prediction: pd.DataFrame, label_columns: list):
@@ -59,10 +57,11 @@ def calculate_confusion_matrix(ground_truth: pd.DataFrame, prediction: pd.DataFr
 
 
 def print_metrics(
-    result_df, model_name, save_path
+    result_df, model_name, save_path, threshold: float
 ) -> None: 
     print(f"Evalution metrics from test dataset:\n", file=open(save_path, "a"))
     print(f"Model: {model_name}", file=open(save_path, "a"))
+    print(f"Threshold: {threshold}", file=open(save_path, "a"))
     pd.display(result_df.to_string())
     #print(f"{variable_metric}:\n{variable_value}\n", file=open(save_path, "a"))
 
