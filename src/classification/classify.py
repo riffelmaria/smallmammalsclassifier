@@ -69,7 +69,7 @@ def main():
         index=True,
     )
 
-    # CLassify audio data
+    # Classify audio data
     prediction_scores_df = prediction(
         model_path=mlmodel, df=original_df, workers=args.workers
     )
@@ -103,3 +103,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# This is a comment.
+print("Hello, World!")
+
+
+my_tuple = (1, 2, 3)
+my_list = [1, 2, 3]
+my_dict = {"a": 1, "b": 2, "c": "test"}
