@@ -101,17 +101,15 @@ After installing, you can use all the functions in the project and the classifie
 Here's a quick example of how to get started with a CLI:
 
 ```bash
-# Preprocess data for prediction
-$ ....
+# Split audio data for prediction into clips
+$ AudioSnippetWriter [base_path] [--snippet_folder] [--duration]
 
-# Choose a model and predict on small sample of your annotated data
-$ ...
+# Classify data with a chosen model (detemined by the model_path)
+$ MLClassification [model_path] [folder_path] [threshold] [--workers]
 
-# Choose a custom threshold if needed and start evaluation
-$ ...
-
-# Predict all data
-$ ...
+# Evaluate performance of chosen model on test dataset
+# ! Important: classify the test dataset before evaluation!
+$ EvaluateTestDF [model_path] [--testdf_path] [--no-display]
 
 ```
 
