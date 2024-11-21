@@ -1,14 +1,16 @@
 import argparse
 import os
+from pathlib import Path
 
 from evaluation.evaluation_functions import (
     get_path_of_pickle,
     load_df_from_pickle,
+    calculate_confusion_matrix,
     print_metrics,
 )
 
 
-def evaluate_classification(): ...
+def evaluate_classification(): pass
 
 
 def evaluate_testdf():
@@ -23,34 +25,31 @@ def evaluate_testdf():
         help="Path to trained model, e.g. /path/to/model_name",
     )
 
-    # parser.add_argument(
-    #    "model_path_with_testdf",
-    #    help="Path to test_df of trained model",
-    # ) # das kann ich selbst im model ordner suchen!
+    parser.add_argument(
+        "-t",
+        "--testdf_path",
+        help="Path to test_df.pkl and the prediction/classification of test_df from trained model",
+    ) 
 
     args = parser.parse_args()
     model_path = args.model_path
-    model_name = model_path.split(os.path.sep)[-1]
-    save_path_txt = model_path + "/eval_metrics_testdf.txt"
-    # save_path_png = model_path + "/metric_plots.png"
+    model_name = Path(model_path).stem
 
-    test_df = load_df_from_pickle(get_path_of_pickle(args.model_path_with_testdf))
+    if args.testdf_path is None:
+        testdf_path = f"temp/{model_name}"
+    else:
+        testdf_path = args.testdf_path
 
-    prediction_scores_df = load_df_from_pickle(
-        f"{args.model_path_with_testdf}/prediction_from_testdf_{model_name}.pkl"
-    )
+    save_path = f"{testdf_path}/eval_metrics_testdf.txt" # JSON better?
 
-    for classes in list(test_df.columns):
-        print(classes, file=open(save_path_txt, "a"))
-        print_metrics(
-            test_df[classes],
-            prediction_scores_df[classes].round(0),
-            model_name,
-            save_path_txt,
-        )  # hier je die passenden spalten in die funktion übergeben und der datei  save path anhängen, mit col name
+    test_df = load_df_from_pickle(get_path_of_pickle(testdf_path, pickle_name="test_dataset"))
 
+    classified_df = load_df_from_pickle(get_path_of_pickle(testdf_path, pickle_name="classified"))
+
+    metrics_df = calculate_confusion_matrix(ground_truth=test_df, prediction= classified_df, label_columns=list(test_df.columns))
+    print_metrics(result_df=metrics_df, model_name=model_name, save_path=save_path)
+    
 
 if __name__ == "__main__":
     evaluate_classification()
 
-#### BIG TO DO
