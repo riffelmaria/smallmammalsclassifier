@@ -13,7 +13,7 @@ dependencies = [
   "scikit-multilearn", 
   "wandb"
 ]
-requires-python = ">=3.9"
+requires-python = "3.11"
 authors = [
   {name = "Maria Riffel", email = "git@mariariffel.de"}
 ]
@@ -29,7 +29,7 @@ Homepage = "https://github.com/riffelmaria/smallmammalsclassifier"
 SetParameters = "training.set_parameters:main"
 MLTraining = "training.train:main"
 AudioSnippetWriter = "preprocessing.create_audio_snippets:main"
-JSONWriter = "preprocessing.create_filepath_jsons:main"
+JSONWriter = "preprocessing.create_train_jsons:main"
 MLClassification = "classification.classify:main"
 GetCPU = "classification.prepare:print_cpus"
 EvaluateTestDF = "evaluation.evaluate:evaluate_testdf"

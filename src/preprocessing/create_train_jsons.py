@@ -54,7 +54,8 @@ def main():
     )
 
     parser.add_argument(
-        "folder_out",
+        "-f",
+        "--folder_out",
         help="Folder path where to write the json files (should be ./src/training/lib)",
         default="./src/training/lib",
         type=str,

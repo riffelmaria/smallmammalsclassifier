@@ -1,5 +1,8 @@
 # predict:
-# samples – the files to generate predictions for. Can be: - a dataframe with index containing audio paths, OR - a dataframe with multi-index (file, start_time, end_time), OR - a list (or np.ndarray) of audio file paths
+# samples – the files to generate predictions for.
+# Can be: - a dataframe with index containing audio paths,
+# OR - a dataframe with multi-index (file, start_time, end_time),
+# OR - a list (or np.ndarray) of audio file paths
 
 import argparse
 import json
@@ -103,12 +106,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# This is a comment.
-print("Hello, World!")
-
-
-my_tuple = (1, 2, 3)
-my_list = [1, 2, 3]
-my_dict = {"a": 1, "b": 2, "c": "test"}
