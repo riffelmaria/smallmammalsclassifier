@@ -45,24 +45,23 @@ Execute these lines on a Linux OS:
 
 ```bash
 # Make sure to have relevant packages installed
-$ sudo apt-get install git  && sudo apt-get install python3-venv
+$ sudo apt-get install git  && sudo apt-get install python3.11 && sudo apt-get install python3-venv
 
 # Clone the repository to your desired directory
-$ cd /path/to/projects && git clone https://github.com/riffelmaria/smallmammalsclassifier.git
+$ cd /path/to/projects
+$ git clone https://github.com/riffelmaria/smallmammalsclassifier.git
 
-# Change directory to the project
+# Change the directory to the project
 $ cd smallmammalsclassifier
 
 # Pull repository
 $ git pull
 
-# Install a Python venv
+# Create a Python venv
 $ python3.11 -m venv /path/to/.venv
 
 # Activate the venv
 $ source /path/to/.venv/bin/activate
-
-# Adjusting local variables ...?
 
 # Install Python project ...
 $ pip install -e .
@@ -97,7 +96,7 @@ For **Windows OS**, you may follow these instructions:
    ```
    my_env\Scripts\activate
    ```
-   If activated, the venv should be displayed before the prompt, like so: 
+   If activated, the venv may be displayed before the prompt, like so: 
    
    ```(my_env) C:\Users\NAME\PYPROJ ```
 7. Install the Python project:
