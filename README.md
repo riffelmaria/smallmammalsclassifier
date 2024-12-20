@@ -302,7 +302,7 @@ dataset/
 The models provided are built using the OpenSoundscape library (internally uses PyTorch). They are trained on an audio dataset of small terrestrial mammal calls.
 The model G2-1-long achieves approximately 25% target recall with an F1-Score of 0.23 in identifying the species groups of small terrestrial mammals.
 The model G2-6-long achieves approxiamtely 79% target recall.
-You can find deailt for each model in "resources".
+You can find details for each model in "resources".
 
 If you want to train your own model, please adjust the parameter with the SetParameters script before executing train.py.
 
